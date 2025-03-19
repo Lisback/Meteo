@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Météo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            color: #333;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            width: 200px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #weatherResult {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Application Météo</h1>
+    <p>Entrez le nom d'une ville :</p>
+    <input type="text" id="cityInput" placeholder="Ex: Paris">
+    <button onclick="getWeather()">Obtenir la Météo</button>
+    <div id="weatherResult"></div>
+
+    <script>
+        function getWeather() {
+            const city = document.getElementById("cityInput").value;
+            const apiKey = "VOTRE_CLE_API"; // Remplacez par votre clé API
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=fr`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.cod === 200) {
+                        const weather = data.weather[0].description;
+                        const temperature = data.main.temp;
+                        const humidity = data.main.humidity;
+                        const windSpeed = data.wind.speed;
+
+                        const result = `
+                            <p><strong>Météo à ${city} :</strong></p>
+                            <p>Conditions : ${weather}</p>
+                            <p>Température : ${temperature} °C</p>
+                            <p>Humidité : ${humidity} %</p>
+                            <p>Vitesse du vent : ${windSpeed} m/s</p>
+                        `;
+                        document.getElementById("weatherResult").innerHTML = result;
+                    } else {
+                        document.getElementById("weatherResult").innerHTML = `<p style="color: red;">Ville non trouvée. Veuillez réessayer.</p>`;
+                    }
+                })
+                .catch(error => {
+                    console.error("Erreur :", error);
+                    document.getElementById("weatherResult").innerHTML = `<p style="color: red;">Une erreur s'est produite. Veuillez réessayer.</p>`;
+                });
+        }
+    </script>
+</body>
+</html>
